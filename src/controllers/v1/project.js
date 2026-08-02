@@ -34,45 +34,33 @@ exports.create = async(req ,res) => {
 }
 
 exports.getAll = async (req ,res) =>{
-    const {search,status,category,page,limit} = req.query
-    const pageNumber = page || 1
-    const limitNumber = limit || 5
-    const skipNumber = (pageNumber - 1) * limitNumber    
+    const {search,status,category,page = 1,limit = 5} = req.query
+    const pageNumber = Number(page)
+    const limitNumber = Number(limit)
+    const skipNumber = (pageNumber - 1) * limitNumber  
+    const query = {}  
 
     if(search){
-        const searchedProjects = await projectModel.find({$or:[
-            {title:{$regex:search,$options:"i"}},
-            {description:{$regex:search,$options:"i"}}]})
-            .skip(skipNumber)
-            .limit(limitNumber)
-        if(searchedProjects.length === 0 ){
-            return res.status(200).json({message: "No Progect Found!",
-                data:searchedProjects
-            })
-        }
-        return res.status(200).json(searchedProjects)
+        query.$or = [
+            {title:{$regex: search, $options: "i"}},
+            {description:{$regex:search,$options:"i"}}
+        ]
     }
     if(status){
-        const statusProjects = await projectModel.find({status:{$regex:status,$options:"i"}})
-        .skip(skipNumber).limit(limitNumber)
-        if(statusProjects.length === 0 ){
-            return res.status(200).json({message: "No Progect Found!",
-                data:statusProjects
-            })
-        }
-        return res.status(200).json(statusProjects)
+        query.status = status
     }
     if(category){
-        const categoryProjects = await projectModel.find({category:{$regex:category,$options:"i"}})
-        .skip(skipNumber).limit(limitNumber)
-        if(categoryProjects.length === 0 ){
-            return res.status(200).json({message: "No Progect Found!",
-                data:categoryProjects
-            })
-        }
-        return res.status(200).json(categoryProjects)
+        query.category = category
     }
-    const projects = await projectModel.find().skip(skipNumber).limit(limitNumber)
+    const projects = await projectModel
+        .find(query)
+        .skip(skipNumber)
+        .limit(limitNumber)
+    if(projects.length === 0 ){
+        return res.status(200).json({message: "No Progect Found!",
+            data:projects
+        })
+    }
     return res.status(200).json({
         message:"Projects Fetched Successfully!",
         data: projects
