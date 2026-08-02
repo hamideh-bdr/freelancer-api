@@ -6,12 +6,6 @@ const {isValidObjectId} = require('mongoose')
 
 exports.create = async(req,res) => {
     const {projectId} = req.params 
-    const isValidId = isValidObjectId(projectId)
-    if(!isValidId){
-        return res.status(422).json({
-            message: "Id is not Valid!"
-    })
-    }
     const {budget,message} = req.body
     const isValid = validatorCreate(req.body)
     if(isValid!== true){
@@ -56,14 +50,8 @@ exports.create = async(req,res) => {
 
 exports.getAll = async(req,res) => {
     const {projectId} = req.params
-    const isValidId = isValidObjectId(projectId)
-    if(!isValidId){
-        return res.status(422).json({
-            message: "Id is not Valid!"
-    })
-    }
+   
     const project = await projectModel.findById(projectId)
-    
     if(String(project.owner) === String(req.user._id)){
         
         const proposals = await proposalModel.find({project:projectId}).populate("user" ,"-password")
@@ -94,12 +82,6 @@ exports.getAllProposals = async(req,res) => {
 
 exports.update = async(req,res) => {
     const {proposalId} = req.params
-    const isValidId = isValidObjectId(proposalId)
-    if(!isValidId){
-        return res.status(422).json({
-            message: "Id is not Valid!"})
-    }
-
     const{budget,message} = req.body 
     const isValid = validatorUpdate(req.body)
     if(isValid!== true){
@@ -126,18 +108,12 @@ exports.update = async(req,res) => {
 
 exports.remove = async(req,res) => {
     const {proposalId} = req.params
-    const isValidId = isValidObjectId(proposalId)
-    if(!isValidId){
-        return res.status(422).json({
-            message: "Id is not Valid!"})
-    }
 
     const proposal = await proposalModel.findById(proposalId)
     if(!proposal){
         return res.status(404).json({
             message: "The Proposal Not Found!"})
     }
-
     if(String(req.user._id) !== String(proposal.user)){
         return res.status(400).json({message: "You Can`t Access "})
     }
@@ -146,12 +122,7 @@ exports.remove = async(req,res) => {
 }
 
 exports.accept = async(req,res) => {
-    const {proposalId} = req.params 
-    const isValidId = isValidObjectId(proposalId)
-    if(!isValidId){
-        return res.status(422).json({
-            message: "Id is not Valid!"})
-    }
+    const {proposalId} = req.params    
     const {status} = req.body
     const isValid = validatorUpdate(req.body)
     if(isValid!== true){

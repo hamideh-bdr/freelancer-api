@@ -69,13 +69,6 @@ exports.getAll = async (req ,res) =>{
 
 exports.getOne = async (req ,res) =>{
     const {id} = req.params 
-    const isValidId = isValidObjectId(id)
-    if(!isValidId){
-        return res.status(422).json({
-            message: "Objectid is not Valid!"
-        })
-    }
-
     const project = await projectModel.findById(id)
 
     if(!project){
@@ -92,13 +85,6 @@ exports.getOne = async (req ,res) =>{
 
 exports.remove = async (req ,res) =>{
     const {id} = req.params
-    const isValidId = isValidObjectId(id)
-    if(!isValidId){
-    return res.status(422).json({
-        message: "Objectid is not Valid!"
-    })
-    }
-
     const removedProject = await projectModel.findByIdAndDelete(id)
     if(!removedProject){
         return res.status(404).json({
@@ -114,13 +100,6 @@ exports.remove = async (req ,res) =>{
 
 exports.update = async (req,res) => {
     const {id} = req.params
-     const isValidId = isValidObjectId(id)
-    if(!isValidId){
-    return res.status(422).json({
-        message: "Objectid is not Valid!"
-    })
-    }
-
     const updatedProject = await projectModel.findByIdAndUpdate(id,req.body)
     if(!updatedProject){
         return res.status(404).json({
