@@ -38,10 +38,11 @@ exports.create = async(req ,res) => {
 }
 
 exports.getAll = async (req ,res) =>{
-    const {search,status,category,page = 1,limit = 5} = req.query
+    const {search,sort,status,category,page = 1,limit = 5} = req.query
     const pageNumber = Number(page)
     const limitNumber = Number(limit)
     const skipNumber = (pageNumber - 1) * limitNumber  
+    let sortOption = {}
     const query = {}  
 
     if(search){
@@ -56,10 +57,34 @@ exports.getAll = async (req ,res) =>{
     if(category){
         query.category = category
     }
+    if(sort === "newest"){
+        sortOption = {
+            createdAt:-1
+        }
+    }
+    if(sort === "oldest"){
+        sortOption = {
+            createdAt:1
+        }
+    }
+    if(sort === "budget-low"){
+        sortOption = {
+            budget:1
+        }
+    }
+    if(sort === "budget-high"){
+        sortOption= {
+            budget:-1
+        }
+    }
+
+
     const projects = await projectModel
         .find(query)
+        .sort(sortOption)
         .skip(skipNumber)
         .limit(limitNumber)
+
     if(projects.length === 0 ){
         return res.status(404).json({
             success: false,
