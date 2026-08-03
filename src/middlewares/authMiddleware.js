@@ -6,7 +6,9 @@ module.exports = async (req,res,next) => {
     const authHeader = req.header('Authorization')?.split(" ")
     if(authHeader?.length !== 2){
         return res.status(401).json({
-            mes: 'you cant access'
+            success: false,
+            message: 'you cant access',
+            data:null
         })
     }
     

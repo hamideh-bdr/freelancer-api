@@ -4,7 +4,11 @@ const proposalModel = require('../../models/proposal')
 exports.stats = async(req ,res) => {
     const projects = await projectModel.find({owner:req.user._id}).select("_id")
     if(projects.length === 0){
-        return res.status(404).json({message: "There Is No Project!"})
+        return res.status(404).json({
+            success: false,
+            message: "There Is No Project!",
+            data: null
+        })
     }
     const projectsCount = await projectModel.countDocuments({owner:req.user._id})
     const openProjects = await projectModel.countDocuments({owner:req.user._id,status:"OPEN"})
@@ -13,12 +17,17 @@ exports.stats = async(req ,res) => {
     const totalProposals = await proposalModel.countDocuments({project:{$in:projects}})
     const acceptedProposals = await proposalModel.countDocuments({project:{$in:projects},status:"ACCEPTED"})
     return res.status(200).json({
-        projectsCount,
-        openProjects,
-        inProgressProjects,
-        completedProjects,
-        totalProposals,
-        acceptedProposals
+        success: true,
+        message: "Dashboard Statistics Fetched Successfully !",
+        data:{
+            projectsCount,
+            openProjects,
+            inProgressProjects,
+            completedProjects,
+            totalProposals,
+            acceptedProposals
+
+        }
 })
         
 }

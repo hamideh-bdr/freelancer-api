@@ -1,10 +1,12 @@
 module.exports=  async(req, res,next) => {
- const isAdmin = req.user.role === 'ADMIN'
- if(isAdmin){
-    return next()
- }
+   const isAdmin = req.user.role === 'ADMIN'
+   if(isAdmin){
+      return next()
+   }
 
- return res.status(403).json({
-    mes: 'only admins can access to this'
- })
+   return res.status(403).json({
+      success: false,
+      mes: 'only admins can access to this',
+      data: null
+   })
 }

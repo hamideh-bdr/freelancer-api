@@ -10,7 +10,8 @@ exports.create = async(req,res) => {
     const isValid = validatorCreate(req.body)
     if(isValid!== true){
         return res.status(422).json({
-            message:"request is not valid!",
+            success:false,
+            message:"Request Is Not Valid!",
             data: isValid
         })
     }
@@ -18,11 +19,17 @@ exports.create = async(req,res) => {
     const project = await projectModel.findById(projectId) 
     if(!project){
         return res.status(404).json({
-            message:"Project Not Found!"
+            success: false,
+            message:"Project Not Found!",
+            data: null
         })
     }
     if(project.status === "IN_PROGRESS" || project.status === "COMPLETED" ){
-        return res.status(409).json({message:"project closed already"})
+        return res.status(409).json({
+            success: false,
+            message:"Project Closed Already",
+            data:null
+        })
     }
 
     const isExist = await proposalModel.findOne({
@@ -30,7 +37,9 @@ exports.create = async(req,res) => {
     })
     if(isExist){
         return res.status(409).json({
-            message: "you have proposal already"
+            success: false,
+            message: "you have proposal already",
+            data:null
         })
 
     }
@@ -42,6 +51,7 @@ exports.create = async(req,res) => {
         project :project._id
     })
     return res.status(201).json({
+        success: true,
         message: 'Proposal Created Successfully!!',
         data: proposal
     })
@@ -52,18 +62,34 @@ exports.getAll = async(req,res) => {
     const {projectId} = req.params
    
     const project = await projectModel.findById(projectId)
+    if(!project){
+        return res.status(404).json({
+            success: false,
+            message: "Project Not Fount!",
+            data: null
+        })
+    }
     if(String(project.owner) === String(req.user._id)){
         
         const proposals = await proposalModel.find({project:projectId}).populate("user" ,"-password")
 
         if(proposals.length === 0){
             return res.status(404).json({
-            mess: "There Is No Proposals For Your Project!"})
+                success: false,
+                message: "There Is No Proposals For Your Project!",
+                data: null
+            })
         }
-        return res.status(200).json({proposals})
+        return res.status(200).json({
+            success: true,
+            message: "Proposals Fetched Successfull!",
+            data: proposals})
     }
     return res.status(403).json({
-        message: "You Are Not Owner Of This Project!"})
+        success: false,
+        message: "You Are Not Owner Of This Project!",
+        data: null
+    })
 }
 
 exports.getAllProposals = async(req,res) => {
@@ -73,11 +99,16 @@ exports.getAllProposals = async(req,res) => {
 
     if(proposals.length === 0){
         return res.status(404).json({
+            success: false,
             message:"There Is No Proposal!",
-            data: proposals
+            data: []
         })
     }
-    return res.status(200).json(proposals)
+    return res.status(200).json({ 
+        success: true,
+        message: "Proposals Fetched Successfully!",
+        data: proposals
+    })
 }
 
 exports.update = async(req,res) => {
@@ -86,22 +117,42 @@ exports.update = async(req,res) => {
     const isValid = validatorUpdate(req.body)
     if(isValid!== true){
         return res.status(422).json({
+            success: false,
             message:"request is not valid!",
             data: isValid
         })
     }
 
     const proposal = await proposalModel.findById(proposalId)
+    if(!proposal){
+        return res.status(404).json({
+            success: false,
+            message: "Proposal Not Found!",
+            data: null
+        })
+    }
     
     if(String(proposal.user) !== String(req.user._id)){
-        return res.status(403).json({message: " You Cant Access Of This Proposal!"})
+        return res.status(403).json({
+            success: false,
+            message: " You Cant Access Of This Proposal!",
+            data:null
+        })
     }
 
     const updatedProposal = await proposalModel.findOneAndUpdate({_id:proposalId} ,req.body)
     if(!updatedProposal){
-        return res.status(404).json({message: "Proposal Is Not There!"})
+        return res.status(404).json({
+            success: false,
+            message: "Proposal Is Not There!",
+            data: null
+        })
     }
-    return res.status(200).json({updatedProposal})
+    return res.status(200).json({
+        success: true,
+        message: "Proposal Updated Successfully!",
+        data: updatedProposal
+    })
 
 
 }
@@ -112,13 +163,24 @@ exports.remove = async(req,res) => {
     const proposal = await proposalModel.findById(proposalId)
     if(!proposal){
         return res.status(404).json({
-            message: "The Proposal Not Found!"})
+            success: false,
+            message: "The Proposal Not Found!",
+            data: null
+        })
     }
     if(String(req.user._id) !== String(proposal.user)){
-        return res.status(400).json({message: "You Can`t Access "})
+        return res.status(400).json({
+            success: false,
+            message: "You Can`t Access ",
+            data: null
+        })
     }
     const removedProposal = await proposalModel.findByIdAndDelete(proposalId)
-     return res.status(200).json({message: "Proposal Removed Successfully!"})    
+     return res.status(200).json({
+        success: true,
+        message: "Proposal Removed Successfully!",
+        data: removedProposal
+    })    
 }
 
 exports.accept = async(req,res) => {
@@ -127,6 +189,7 @@ exports.accept = async(req,res) => {
     const isValid = validatorUpdate(req.body)
     if(isValid!== true){
         return res.status(422).json({
+            success: false,
             message:"request is not valid!",
             data: isValid})
     }
@@ -134,7 +197,10 @@ exports.accept = async(req,res) => {
     const proposal = await proposalModel.findById(proposalId); 
      if(!proposal){
         return res.status(404).json({
-            message: "The Proposal Not Found!"})
+            success: false,
+            message: "The Proposal Not Found!",
+            data: null
+        })
     } 
     const project = await projectModel.findOne(proposal.project)
     
@@ -145,18 +211,26 @@ exports.accept = async(req,res) => {
         
         if(acceptedProposal && req.body.status === "ACCEPTED" ){
             return res.status(409).json({
-                message:"There Is Accepted Proposal!"})
+                success: false,
+                message:"There Is Accepted Proposal!",
+                data: null
+            })
         }
 
-        const updatedProposal = await proposalModel.findByIdAndUpdate(proposalId,req.body,{returnDocument : 'after'})        
+        const updatedProposal = await proposalModel.findByIdAndUpdate(
+            proposalId,req.body,{returnDocument : 'after'})        
         if(req.body.status === "ACCEPTED"){ //
             await projectModel.findOneAndUpdate(
                 updatedProposal.project,{status:"IN_PROGRESS"})
             }
-        return res.status(200).json(updatedProposal)
+        return res.status(200).json({
+            success: true,
+            message: "Proposal Updated Successfully !",
+            data: updatedProposal})
     }
-    return res.status(403).json({message: "you cant access to update !"})
-    
-    
-
+    return res.status(403).json({
+        success: false,
+        message: "you cant access to update !",
+        data: null
+    })
 }

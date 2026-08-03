@@ -8,7 +8,10 @@ exports.register = async (req ,res) => {
 
     const validatorResult = validator(req.body)
     if(validatorResult!== true){
-        return res.json(validatorResult)
+        return res.status(422).json({
+            success: false,
+            message: "Request Is Not Valid !",
+            data: validatorResult})
 
     }
 
@@ -16,7 +19,11 @@ exports.register = async (req ,res) => {
         $or:[{username},{email},{phone}]
     })
     if(isUserExist){
-        return res.status(409).json({message:'user exist already'})
+        return res.status(409).json({
+            success: false,
+            message:"user exist already",
+            data: null
+        })
         
     }
    
@@ -46,26 +53,34 @@ exports.login = async (req,res) => {
     })
     if(!user){
         return res.status(404).json({
-            message: "user not found"
+            success: false,
+            message: "user not found",
+            data: null
         })
     }
 
     const verifyPassword = await bcrypt.compare(password,user.password)    
     if(!verifyPassword){
         return res.status(401).json({
-            message: "Invalid email or password!"
+            success: false,
+            message: "Invalid email or password!",
+            data: null
         })
     }
 
     const token = jwt.sign({id: user._id},process.env.JWT_SECRET,{expiresIn: "30 days"})
     return res.status(200).json({
+        success: true,
         message: "user login successfully!",
         data: token
     })
 }
 
 exports.getMe = async (req,res) => {
-    
-    return res.json(req.user)
+    return res.status(200).json({
+        success: true,
+        message: "User Profile Fetched Successfully !" ,
+        data: req.user
+    })
     
 }

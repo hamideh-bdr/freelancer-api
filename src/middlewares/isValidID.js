@@ -5,10 +5,13 @@ module.exports= (req ,res, next) => {
     const objectId = id || proposalId || projectId
 
     const isValidId = isValidObjectId(objectId)
-    console.log(isValidId);
     
     if(!isValidId){
-        return res.status(422).json({message: "Id is Not Valid !!"}) 
+        return res.status(422).json({
+            success: false,
+            message: "Id is Not Valid !!",
+            data: null
+        }) 
     }
     next()
 }
