@@ -27,6 +27,10 @@ const schema = new mongoose.Schema({
     category:{
         type: String,
         required: true
+    },
+    images:{
+        type: [String],
+        default: []
     }
 },{timestamps: true})
 

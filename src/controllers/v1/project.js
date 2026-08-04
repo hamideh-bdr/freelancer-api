@@ -9,7 +9,9 @@ exports.create = async(req ,res) => {
     description,
     budget,
     deliveryDays,
-    category} = req.body
+    category,
+    images
+} = req.body
 
     const validate = valid(req.body)
     if(validate!== true){
@@ -18,6 +20,7 @@ exports.create = async(req ,res) => {
             message: "Request Is Not Valid !",
             data: validate})
     }
+    const image = req.files.map(file => file.filename)
 
     const project = await projectModel.create({
     title,
@@ -25,7 +28,8 @@ exports.create = async(req ,res) => {
     budget,
     deliveryDays,
     category,
-    owner: req.user._id
+    owner: req.user._id,
+    images: image
     })
 
     return res.status(201).json({

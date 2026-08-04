@@ -4,9 +4,10 @@ const projectController = require('../../controllers/v1/project')
 const authMiddleware = require('../../middlewares/authMiddleware')
 const isAdminMiddleware = require('../../middlewares/isAdmin')
 const isValidIdMiddleware = require('../../middlewares/isValidID')
+const upload = require('../../middlewares/multer')
 
 router.route('/')
-    .post(authMiddleware,projectController.create)
+    .post(authMiddleware,upload.array("images",5),projectController.create)
     .get(projectController.getAll)
 
 router.route("/my")
