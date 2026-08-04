@@ -1,8 +1,8 @@
 const projectModel = require('../../models/project')
 const userModel = require('../../models/user')
-const valid = require('../../validator/project')
+const valid = require('../../validators/project')
 const {isValidObjectId} = require('mongoose')
-const validator = require('../../validator/project');
+const validator = require('../../validators/project');
 
 exports.create = async(req ,res) => {
     const {title,
@@ -42,7 +42,7 @@ exports.getAll = async (req ,res) =>{
     const pageNumber = Number(page)
     const limitNumber = Number(limit)
     const skipNumber = (pageNumber - 1) * limitNumber  
-    let sortOption = {}
+    const sortOption = {}
     const query = {}  
 
     if(search){
@@ -58,24 +58,16 @@ exports.getAll = async (req ,res) =>{
         query.category = category
     }
     if(sort === "newest"){
-        sortOption = {
-            createdAt:-1
-        }
+        sortOption.createdAt = -1
     }
     if(sort === "oldest"){
-        sortOption = {
-            createdAt:1
-        }
+        sortOption.createdAt = 1
     }
     if(sort === "budget-low"){
-        sortOption = {
-            budget:1
-        }
+        sortOption.budget = 1
     }
     if(sort === "budget-high"){
-        sortOption= {
-            budget:-1
-        }
+        sortOption.budget = -1
     }
 
 

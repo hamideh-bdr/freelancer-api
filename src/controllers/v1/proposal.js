@@ -1,7 +1,7 @@
 const proposalModel = require('../../models/proposal')
 const projectModel = require('../../models/project')
-const validatorCreate = require('../../validator/proposalCreate')
-const validatorUpdate = require('../../validator/proposalUpdate')
+const validatorCreate = require('../../validators/proposalCreate')
+const validatorUpdate = require('../../validators/proposalUpdate')
 const {isValidObjectId} = require('mongoose')
 
 exports.create = async(req,res) => {

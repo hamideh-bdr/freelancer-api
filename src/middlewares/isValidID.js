@@ -1,8 +1,8 @@
 const {isValidObjectId} = require('mongoose')
 
 module.exports= (req ,res, next) => {
-    const {id,proposalId,projectId} = req.params
-    const objectId = id || proposalId || projectId
+    const {id,proposalId,projectId, bookmarkId} = req.params
+    const objectId = id || proposalId || projectId || bookmarkId
 
     const isValidId = isValidObjectId(objectId)
     
