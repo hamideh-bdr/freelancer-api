@@ -84,3 +84,16 @@ exports.getMe = async (req,res) => {
     })
     
 }
+
+exports.uploadAvatar = async (req,res) => {
+    const updateUser = await userModel.findByIdAndUpdate(
+        req.user._id,
+        { avatar: req.file.filename}, {new: true}
+    )    
+    return res.status(200).json({
+        success: true,
+        message: "Avatar uploaded successfully",
+        data: updateUser
+    })
+    
+}

@@ -25,6 +25,10 @@ const schema ={
         type : "string",
         required: true,
         min: 8
+    },
+    avatar:{
+        type: "string",
+        optional: true
     }
 }
 
