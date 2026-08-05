@@ -116,39 +116,58 @@ exports.getOne = async (req ,res) =>{
 
 exports.remove = async (req ,res) =>{
     const {id} = req.params
-    const removedProject = await projectModel.findByIdAndDelete(id)
-    if(!removedProject){
-        return res.status(404).json({
-            success: false,
-            message:"project not found",
-            data: null
-        })
-    }
 
-    return res.status(200).json({
-        success: true,
-        message:"project removed Succesfully!",
-        data: removedProject
-    })
-
-}
-
-exports.update = async (req,res) => {
-    const {id} = req.params
-    const updatedProject = await projectModel.findByIdAndUpdate(id,req.body)
-    if(!updatedProject){
+    const project = await projectModel.findById(id)
+    if(!project){
         return res.status(404).json({
             success: false,
             message:"Project Not Found",
             data: null
         })
     }
-
-    return res.status(200).json({
-        success: true,
-        message: "Project Updates Successfully !",
-        data: updatedProject
+    if(String(project.owner) === String(req.user._id)){
+        const removedProject = await projectModel.findByIdAndDelete(id)
+        return res.status(200).json({
+            success: true,
+            message:"project removed Succesfully!",
+            data: null
+        })
+    }
+    return res.status(409).json({
+        success: false,
+        message:"you cant removed project!",
+        data: null
     })
+
+    
+
+}
+
+exports.update = async (req,res) => {
+    const {id} = req.params
+
+    const project = await projectModel.findById(id)
+    if(!project){
+        return res.status(404).json({
+            success: false,
+            message:"Project Not Found",
+            data: null
+        })
+        }
+    if(String(project.owner) === String(req.user._id)){
+        const updatedProject = await projectModel.findByIdAndUpdate(id,req.body,{returnDocument:'after'})
+        return res.status(200).json({
+            success: true,
+            message: "Project Updates Successfully !",
+            data: updatedProject
+        })
+    }
+    return res.status(404).json({
+        success: false,
+        message:"you cant update project",
+        data: null
+    })
+
 }
 
 exports.getMy = async(req,res) => {

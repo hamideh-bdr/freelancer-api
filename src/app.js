@@ -14,6 +14,7 @@ app.use('/auth',authRouter)
 app.use('/projects',projectRouter)
 app.use('/proposals',proposalRouter)
 app.use('/bookmarks',bookMarkMiddleware)
+app.use('/dashboards',dashboardRouter)
 
 
 module.exports = app 

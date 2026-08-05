@@ -2,6 +2,7 @@ const proposalModel = require('../../models/proposal')
 const projectModel = require('../../models/project')
 const validatorCreate = require('../../validators/proposalCreate')
 const validatorUpdate = require('../../validators/proposalUpdate')
+const validatprAccept = require('../../validators/proposalAccept')
 const {isValidObjectId} = require('mongoose')
 
 exports.create = async(req,res) => {
@@ -111,7 +112,7 @@ exports.getAllProposals = async(req,res) => {
     })
 }
 
-exports.update = async(req,res) => {
+exports.update = async(req,res) => {    
     const {proposalId} = req.params
     const{budget,message} = req.body 
     const isValid = validatorUpdate(req.body)
@@ -140,7 +141,8 @@ exports.update = async(req,res) => {
         })
     }
 
-    const updatedProposal = await proposalModel.findOneAndUpdate({_id:proposalId} ,req.body)
+    const updatedProposal = await proposalModel.findOneAndUpdate(
+        {_id:proposalId} ,req.body, {returnDocument: 'after'})
     if(!updatedProposal){
         return res.status(404).json({
             success: false,
@@ -179,14 +181,14 @@ exports.remove = async(req,res) => {
      return res.status(200).json({
         success: true,
         message: "Proposal Removed Successfully!",
-        data: removedProposal
+        data: null
     })    
 }
 
-exports.accept = async(req,res) => {
+exports.accept = async(req,res) => {    
     const {proposalId} = req.params    
     const {status} = req.body
-    const isValid = validatorUpdate(req.body)
+    const isValid = validatprAccept(req.body)
     if(isValid!== true){
         return res.status(422).json({
             success: false,

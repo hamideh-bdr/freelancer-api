@@ -10,10 +10,6 @@ const schema = {
         type: "string",
         min:10,
         optional: true
-    },
-    status:{
-        type: "string",
-        enum: ["PENDING","ACCEPTED","REJECTED"],
     }
 }
 const result = v.compile(schema)

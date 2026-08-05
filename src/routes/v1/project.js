@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const projectController = require('../../controllers/v1/project')
 const authMiddleware = require('../../middlewares/authMiddleware')
-const isAdminMiddleware = require('../../middlewares/isAdmin')
 const isValidIdMiddleware = require('../../middlewares/isValidID')
 const upload = require('../../middlewares/multer')
 
@@ -15,8 +14,8 @@ router.route("/my")
 
 router.route('/:id')
     .get(isValidIdMiddleware,projectController.getOne)
-    .delete(authMiddleware,isAdminMiddleware,isValidIdMiddleware,projectController.remove)
-    .patch(authMiddleware,isAdminMiddleware,isValidIdMiddleware,projectController.update)
+    .delete(authMiddleware,isValidIdMiddleware,projectController.remove)
+    .patch(authMiddleware,isValidIdMiddleware,projectController.update)
 
 
 module.exports = router
