@@ -70,7 +70,7 @@ exports.getOne = async(req ,res) => {
     const {bookmarkId} = req.params 
     const bookmark = await bookMarkModel.findById(bookmarkId).populate("project")
     if(!bookmark){
-         return res.status(409).json({
+         return res.status(404).json({
             success: false,
             message: "Bookmark not found !",
             data: null

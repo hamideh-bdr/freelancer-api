@@ -2,7 +2,7 @@ const validator = require('fastest-validator')
 const { default: mongoose } = require('mongoose')
 const v = new validator()
 const schema = {
-     title:{
+    title:{
         type: "string",
         required: true,
         min: 5

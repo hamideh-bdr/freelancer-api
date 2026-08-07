@@ -158,7 +158,7 @@ exports.update = async (req,res) => {
         const updatedProject = await projectModel.findByIdAndUpdate(id,req.body,{returnDocument:'after'})
         return res.status(200).json({
             success: true,
-            message: "Project Updates Successfully !",
+            message: "Project Updated Successfully !",
             data: updatedProject
         })
     }
@@ -175,7 +175,7 @@ exports.getMy = async(req,res) => {
     if(projects.length === 0){
         return res.status(404).json({
             success: false,
-            message: "Projects Not Found!",
+            message: "There is no projects!",
             data: null
         })
     }
