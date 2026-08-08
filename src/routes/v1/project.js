@@ -6,6 +6,149 @@ const isValidIdMiddleware = require('../../middlewares/isValidID')
 const upload = require('../../middlewares/multer')
 
 
+/**
+ * @swagger
+ * /projects:
+ *   post:
+ *     summary: Create a new project
+ *     tags:
+ *       - Projects
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - category
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Build a freelancer website
+ *               description:
+ *                 type: string
+ *                 example: I need a backend developer to build my website.
+ *               budget:
+ *                 type: number
+ *                 example: 500
+ *               category:
+ *                 type: string
+ *                 example: Web Development
+ *               deliveryDays:
+ *                 type: number
+ *                 example: 51
+ *
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - category
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Build a freelancer website
+ *               description:
+ *                 type: string
+ *                 example: I need a backend developer to build my website.
+ *               budget:
+ *                 type: number
+ *                 example: 500
+ *               category:
+ *                 type: string
+ *                 example: Web Development
+ *               deliveryDays:
+ *                 type: number
+ *                 example: 51
+ * 
+ *               images:
+ *                 type: array
+ *                 maxItems: 5
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ *       422:
+ *         description: Validation failed
+ *
+ * 
+ *   get:
+ *     summary: Get all projects
+ *     tags:
+ *       - Projects
+ *
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Search in project title and description
+ *         example: website
+ *
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - OPEN
+ *             - IN_PROGRESS
+ *             - COMPLETED
+ *         description: Filter projects by status
+ *         example: OPEN
+ *
+ *       - in: query
+ *         name: category
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter projects by category
+ *         example: Web
+ *
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           minimum: 1
+ *         description: Page number
+ *         example: 1
+ *
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 5
+ *           minimum: 1
+ *         description: Number of projects per page
+ *         example: 5
+ *
+ *       - in: query
+ *         name: sort
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Sort projects
+ *         example: newest
+ *
+ *     responses:
+ *       200:
+ *         description: Projects fetched successfully
+ *
+ *       404:
+ *         description: No projects found
+ *
+ *       500:
+ *         description: Internal server error
+ */
 router.route('/')
     .post(authMiddleware,upload.array("images",5),projectController.create)
     .get(projectController.getAll)
