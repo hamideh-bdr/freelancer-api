@@ -181,6 +181,31 @@ exports.refreshToken = async (req,res) => {
             })
         }
 
+        refreshTokenRecord.revokedAt = new Date()
+        await refreshTokenRecord.save()
+
+        const newRefreshToken = jwt.sign(
+            {id:decoded.id},process.env.JWT_REFRESH_SECRET,{expiresIn: "30d"})
+
+        const hashedRefreshToken = await bcrypt.hash(newRefreshToken,10)
+
+        const expiresAt = new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+        )
+
+        const savedHashedToken = await refreshTokenModel.create({
+            tokenHash:hashedRefreshToken,
+            user: decoded.id,
+            expiresAt 
+        })
+
+        res.cookie("refreshToken",newRefreshToken,{
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        })
+
         const accessToken = jwt.sign(
             {id: decoded.id},process.env.JWT_SECRET,{expiresIn: "15m"}
         )
