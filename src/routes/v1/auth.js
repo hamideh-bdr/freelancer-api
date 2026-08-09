@@ -124,4 +124,21 @@ router.route('/me')
 router.route("/avatar")
     .patch(authMiddleware,upload.single("avatar"),authController.uploadAvatar)
 
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     summary: Refresh access token
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: Access token refreshed successfully
+ *       401:
+ *         description: Invalid, expired, revoked, or missing refresh token
+ */
+router.route("/refresh-token")
+    .post(authController.refreshToken)
+
+
 module.exports = router
