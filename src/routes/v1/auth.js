@@ -140,5 +140,21 @@ router.route("/avatar")
 router.route("/refresh-token")
     .post(authController.refreshToken)
 
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: Logout successfully
+ *       401:
+ *         description: Refresh token not found or invalid
+ */
+router.route("/logout")
+    .post(authController.logout)
+
 
 module.exports = router

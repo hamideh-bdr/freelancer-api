@@ -225,3 +225,58 @@ exports.refreshToken = async (req,res) => {
         })
     }
 }
+
+exports.logout = async (req, res) => {
+    const { refreshToken } = req.cookies
+
+    if (!refreshToken) {
+        return res.status(401).json({
+            success: false,
+            message: "Refresh token not found !",
+            data: null
+        })
+    }
+
+    const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET
+    )
+
+    const refreshTokens = await refreshTokenModel.find({
+        user: decoded.id
+    })
+
+    let refreshTokenRecord = null
+
+    for (const token of refreshTokens) {
+        const isMatch = await bcrypt.compare(
+            refreshToken,
+            token.tokenHash
+        )
+
+        if (isMatch) {
+            refreshTokenRecord = token
+            break
+        }
+    }
+
+    if (!refreshTokenRecord) {
+        return res.status(401).json({
+            success: false,
+            message: "Invalid refresh token !",
+            data: null
+        })
+    }
+
+    refreshTokenRecord.revokedAt = new Date()
+
+    await refreshTokenRecord.save()
+
+    res.clearCookie("refreshToken")
+
+    return res.status(200).json({
+        success: true,
+        message: "Logout successfully !",
+        data: null
+    })
+}
