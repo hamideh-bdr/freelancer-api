@@ -10,7 +10,7 @@ const options = {
         },
         servers: [
             {
-                url: "https://freelancer-api-jhgh.onrender.com",
+                url: "https://freelancer-api-jhqh.onrender.com",
                 description: "Production"
             },
             {
