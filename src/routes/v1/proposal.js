@@ -18,8 +18,8 @@ router.use(generalLimit)
  *         name: proposalId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     requestBody:
  *       required: true
  *       content:
@@ -53,8 +53,8 @@ router.use(generalLimit)
  *         name: proposalId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     responses:
  *       200:
  *         description: Proposal removed successfully
@@ -81,8 +81,8 @@ router.route('/:proposalId')
  *         name: proposalId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     requestBody:
  *       required: true
  *       content:
@@ -122,8 +122,8 @@ router.route('/:proposalId/accept')
  *         name: projectId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     requestBody:
  *       required: true
  *       content:
@@ -159,8 +159,8 @@ router.route('/:proposalId/accept')
  *         name: projectId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     responses:
  *       200:
  *         description: Processes done successfully

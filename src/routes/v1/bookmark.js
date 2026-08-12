@@ -19,8 +19,8 @@ router.use(generalLimit)
  *         name: bookmarkId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     responses:
  *       200:
  *         description: Bookmark removed successfully
@@ -41,8 +41,8 @@ router.use(generalLimit)
  *         name: bookmarkId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     responses:
  *       200:
  *         description: Bookmark fetched successfully
@@ -69,8 +69,8 @@ router.route('/:bookmarkId/')
  *         name: projectId
  *         required: true
  *         schema:
- *           type: srting
- *           example: 6b78f865d875jn976n6438n
+ *           type: string
+ *           example: 6a73af4d661c2a3a7484ddc4
  *     responses:
  *       201:
  *         description: Project bookmarked successfully
