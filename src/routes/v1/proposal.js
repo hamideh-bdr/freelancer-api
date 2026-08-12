@@ -1,8 +1,10 @@
 const express = require('express')
 const authMiddleware = require('../../middlewares/authMiddleware')
 const isValidIdMiddleware = require('../../middlewares/isValidID')
+const {generalLimit} = require('../../middlewares/rateLimiter')
 const proposalController = require('../../controllers/v1/proposal')
 const router = express.Router()
+router.use(generalLimit)
 
 /**
  * @swagger

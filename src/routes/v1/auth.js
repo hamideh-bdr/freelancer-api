@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../../middlewares/authMiddleware')
+const {authLimit, generalLimit} = require('../../middlewares/rateLimiter')
 const authController = require('../../controllers/v1/auth')
 const upload = require('../../middlewares/multer')
 
@@ -48,7 +49,7 @@ const upload = require('../../middlewares/multer')
  *         description: Username or email already exists
  */
 router.route('/register')
-    .post(authController.register)
+    .post(authLimit,authController.register)
 
 /**
  * @swagger
@@ -82,7 +83,7 @@ router.route('/register')
  *         description: Invalid email or password
  */
 router.route('/login')
-    .post(authController.login)
+    .post(authLimit,authController.login)
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ router.route('/login')
  *         description: User fetched successfully
  */
 router.route('/me')
-    .get(authMiddleware,authController.getMe)
+    .get(generalLimit,authMiddleware,authController.getMe)
 
 /**
  * @swagger
@@ -122,7 +123,7 @@ router.route('/me')
  *         description: Avatar uploaded successfully
  */
 router.route("/avatar")
-    .patch(authMiddleware,upload.single("avatar"),authController.uploadAvatar)
+    .patch(generalLimit,authMiddleware,upload.single("avatar"),authController.uploadAvatar)
 
 /**
  * @swagger
@@ -138,7 +139,7 @@ router.route("/avatar")
  *         description: Invalid, expired, revoked, or missing refresh token
  */
 router.route("/refresh-token")
-    .post(authController.refreshToken)
+    .post(authLimit,authController.refreshToken)
 
 /**
  * @swagger
@@ -154,7 +155,7 @@ router.route("/refresh-token")
  *         description: Refresh token not found or invalid
  */
 router.route("/logout")
-    .post(authController.logout)
+    .post(generalLimit,authController.logout)
 
 
 module.exports = router

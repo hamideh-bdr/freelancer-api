@@ -3,6 +3,9 @@ const router = express.Router()
 const bookMarkController = require('../../controllers/v1/bookmark')
 const authMiddleware = require('../../middlewares/authMiddleware')
 const isValidMiddleware = require('../../middlewares/isValidID')
+const {generalLimit} = require('../../middlewares/rateLimiter')
+
+router.use(generalLimit)
 
 /**
  * @swagger

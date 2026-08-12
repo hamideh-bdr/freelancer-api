@@ -3,8 +3,10 @@ const router = express.Router()
 const projectController = require('../../controllers/v1/project')
 const authMiddleware = require('../../middlewares/authMiddleware')
 const isValidIdMiddleware = require('../../middlewares/isValidID')
+const {generalLimit} = require('../../middlewares/rateLimiter')
 const upload = require('../../middlewares/multer')
 
+router.use(generalLimit)
 
 /**
  * @swagger

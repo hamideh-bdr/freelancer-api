@@ -2,6 +2,9 @@ const express = require('express')
 const router = express.Router()
 const dashboardController = require('../../controllers/v1/dashboard')
 const authMiddleware = require('../../middlewares/authMiddleware')
+const {generalLimit} = require('../../middlewares/rateLimiter')
+
+router.use(generalLimit)
 
 /**
  * @swagger
