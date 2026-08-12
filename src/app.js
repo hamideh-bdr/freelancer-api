@@ -18,6 +18,11 @@ app.use(express.json())
 app.use(express.urlencoded())
 app.use("/uploads" , express.static(path.join(__dirname ,"uploads")))
 app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+app.get("/ping", (req,res) => {
+    res.status(200).json({
+        message: "pong"
+    })
+})
 app.use('/auth',authRouter)
 app.use('/projects',projectRouter)
 app.use('/proposals',proposalRouter)
