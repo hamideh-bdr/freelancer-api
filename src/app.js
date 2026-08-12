@@ -1,6 +1,13 @@
 const express = require("express")
 const app = express()
+
+app.use((req ,res ,next) => {
+    console.log("REQUEST:" , req.method, req.originalUrl);
+    next()
+    
+})
 const path = require('path')
+const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const swaggerUi = require('swagger-ui-express')
 const swaggerSpec = require('./config/swagger')
@@ -10,6 +17,8 @@ const proposalRouter = require('./routes/v1/proposal')
 const dashboardRouter = require('./routes/v1/dashboard')
 const bookMarkMiddleware = require('./routes/v1/bookmark')
 
+
+app.use(cors())
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded())
