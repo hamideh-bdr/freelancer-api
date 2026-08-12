@@ -1,10 +1,5 @@
 const express = require("express")
 const app = express()
-app.use((req,res,next) => {
-    console.log("INCOMING REQUEST:" ,req.method, req.originalUrl);
-    next()
-    
-})
 const path = require('path')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -24,23 +19,11 @@ app.use(express.json())
 app.use(express.urlencoded())
 app.use("/uploads" , express.static(path.join(__dirname ,"uploads")))
 app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec))
-app.get("/ping", (req,res) => {
-    console.log("PING ROUTE HIT");
-    
-    res.status(200).json({
-        message: "PONG_FROM-PRODUCTION",
-    })
-})
 app.use('/auth',authRouter)
 app.use('/projects',projectRouter)
 app.use('/proposals',proposalRouter)
 app.use('/bookmarks',bookMarkMiddleware)
 app.use('/dashboards',dashboardRouter)
-app.use((req,res) => {
-    res.status(404).json({
-        message: `Route not found: ${req.method} ${req.originalUrl}`
-    })
-})
 
 
 module.exports = app 
