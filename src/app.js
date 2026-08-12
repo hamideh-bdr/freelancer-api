@@ -23,6 +23,11 @@ app.use('/projects',projectRouter)
 app.use('/proposals',proposalRouter)
 app.use('/bookmarks',bookMarkMiddleware)
 app.use('/dashboards',dashboardRouter)
+app.use((req,res) => {
+    res.status(404).json({
+        message: `Route not found: ${req.method} ${req.originalUrl}`
+    })
+})
 
 
 module.exports = app 
