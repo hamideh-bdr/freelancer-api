@@ -1,11 +1,5 @@
 const express = require("express")
 const app = express()
-
-app.use((req ,res ,next) => {
-    console.log("REQUEST:" , req.method, req.originalUrl);
-    next()
-    
-})
 const path = require('path')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
