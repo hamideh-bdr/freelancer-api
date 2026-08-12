@@ -1,5 +1,10 @@
 const express = require("express")
 const app = express()
+app.use((req,res,next) => {
+    console.log("INCOMING REQUEST:" ,req.method, req.originalUrl);
+    next()
+    
+})
 const path = require('path')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -10,7 +15,7 @@ const projectRouter = require('./routes/v1/project')
 const proposalRouter = require('./routes/v1/proposal')
 const dashboardRouter = require('./routes/v1/dashboard')
 const bookMarkMiddleware = require('./routes/v1/bookmark')
-const { version } = require("os")
+
 
 
 app.use(cors())
@@ -20,9 +25,10 @@ app.use(express.urlencoded())
 app.use("/uploads" , express.static(path.join(__dirname ,"uploads")))
 app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 app.get("/ping", (req,res) => {
+    console.log("PING ROUTE HIT");
+    
     res.status(200).json({
         message: "PONG_FROM-PRODUCTION",
-        version: "2026-08-13-TEST-001"
     })
 })
 app.use('/auth',authRouter)
