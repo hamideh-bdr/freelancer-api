@@ -10,7 +10,12 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:4002"
+                url: "https://freelancer-api-jhgh.onrender.com",
+                description: "Production"
+            },
+            {
+                url: "http://localhost:4002",
+                description: "Development"
             }
         ]
     },
