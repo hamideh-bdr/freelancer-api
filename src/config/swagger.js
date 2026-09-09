@@ -1,25 +1,66 @@
-const swaggerJsdoc = require("swagger-jsdoc")
+// const swaggerJsdoc = require("swagger-jsdoc")
+
+// const options = {
+//     definition: {
+//         openapi: "3.0.0",
+//         info: {
+//             title: "Freelancer API",
+//             version: "1.0.0",
+//             description: "Freelancer Backend API Documentation"
+//         },
+//         servers: [
+//             {
+//                 url: "https://freelancer-api-jhqh.onrender.com",
+//                 description: "Production"
+//             },
+//             {
+//                 url: "http://localhost:4002",
+//                 description: "Development"
+//             }
+//         ]
+//     },
+//     apis: ["./src/routes/**/*.js"]
+// }
+
+// module.exports = swaggerJsdoc(options)
+
+
+
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "Freelancer API",
-            version: "1.0.0",
-            description: "Freelancer Backend API Documentation"
-        },
-        servers: [
-            {
-                url: "https://freelancer-api-jhqh.onrender.com",
-                description: "Production"
-            },
-            {
-                url: "http://localhost:4002",
-                description: "Development"
-            }
-        ]
-    },
-    apis: ["./src/routes/**/*.js"]
-}
+  definition: {
+    openapi: "3.0.0",
 
-module.exports = swaggerJsdoc(options)
+    info: {
+      title: "Freelancer API",
+      version: "1.0.0",
+      description: "Freelancer Backend API Documentation",
+    },
+
+    servers: [
+      {
+        url: "https://freelancer-api-jhqh.onrender.com",
+        description: "Production",
+      },
+      {
+        url: "http://localhost:4002",
+        description: "Development",
+      },
+    ],
+
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+
+  apis: ["./src/routes/**/*.js"],
+};
+
+module.exports = swaggerJsdoc(options);

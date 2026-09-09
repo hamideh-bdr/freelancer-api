@@ -19,6 +19,9 @@ app.use(express.json())
 app.use(express.urlencoded())
 app.use("/uploads" , express.static(path.join(__dirname ,"uploads")))
 app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+app.get("/swagger.json", (req, res) => {
+  res.json(swaggerSpec);
+});
 app.use('/auth',authRouter)
 app.use('/projects',projectRouter)
 app.use('/proposals',proposalRouter)
