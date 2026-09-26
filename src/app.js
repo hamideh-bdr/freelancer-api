@@ -12,7 +12,16 @@ const dashboardRouter = require('./routes/v1/dashboard')
 const bookMarkMiddleware = require('./routes/v1/bookmark')
 
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }))
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://freelancer-frontend-35qf.onrender.com"
+]
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded())
