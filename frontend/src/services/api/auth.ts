@@ -1,7 +1,12 @@
 import { api, extractToken, unwrapEnvelope } from "./axiosInstance";
 import type { LoginPayload, RegisterPayload, User } from "@/types";
 
-
+/**
+ * توجه: پاسخ واقعی /auth/login و /auth/register به این شکل است:
+ * { success: true, message: "...", data: "<accessToken>" }
+ * یعنی فقط توکن برمی‌گردد، نه اطلاعات کاربر. برای گرفتن اطلاعات کاربر
+ * باید بعد از ورود، جداگانه getMe() صدا زده شود (این کار در AuthContext انجام می‌شود).
+ */
 
 export async function register(payload: RegisterPayload): Promise<string> {
   const { data } = await api.post("/auth/register", payload);

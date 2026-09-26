@@ -1,7 +1,12 @@
 import { api, unwrapEnvelope } from "./axiosInstance";
 import type { PaginatedResult, Project, ProjectListQuery, ProjectPayload } from "@/types";
 
-
+/**
+ * پاسخ‌های این بک‌اند در یک پوشش یکسان می‌آیند: { success, message, data }.
+ * unwrapEnvelope این پوشش را باز می‌کند. بعد از آن، چون شکل دقیق فیلدهای
+ * صفحه‌بندی (page/total/...) در swagger.json مستند نبود، چند حالت رایج
+ * را هم پوشش می‌دهیم تا با کوچک‌ترین اختلاف از کار نیفتد.
+ */
 function normalizePaginated(raw: unknown, fallbackLimit: number, fallbackPage: number): PaginatedResult<Project> {
   const unwrapped = unwrapEnvelope<unknown>(raw);
 

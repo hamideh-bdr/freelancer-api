@@ -28,6 +28,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // در بار اول بارگذاری اپ، تلاش می‌کنیم با refresh token (کوکی httpOnly)
+    // یک access token جدید بگیریم و بعد اطلاعات کاربر را جداگانه دریافت کنیم
+    // (چون بک‌اند در پاسخ توکن، خود کاربر را برنمی‌گرداند).
     (async () => {
       try {
         const token = await authApi.refreshToken();

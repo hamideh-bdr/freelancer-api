@@ -32,7 +32,7 @@ export default function RegisterPage() {
     if (!form.username.trim()) errors.username = "نام کاربری را وارد کنید.";
     if (!/^\S+@\S+\.\S+$/.test(form.email)) errors.email = "ایمیل معتبر نیست.";
     if (!/^0?9\d{9}$/.test(form.phone.replace(/\s/g, ""))) errors.phone = "شماره موبایل معتبر نیست.";
-    if (form.password.length < 6) errors.password = "رمز عبور باید حداقل ۶ کاراکتر باشد.";
+    if (form.password.length < 8) errors.password = "رمز عبور باید حداقل ۸ کاراکتر باشد.";
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -119,6 +119,7 @@ export default function RegisterPage() {
           id="password"
           type="password"
           className="input"
+          placeholder="حداقل ۸ کاراکتر"
           value={form.password}
           onChange={update("password")}
           disabled={submitting}

@@ -25,6 +25,7 @@ export default function ProjectDetailsPage() {
 
   const [project, setProject] = useState<Project | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [myProposal, setMyProposal] = useState<Proposal | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -47,6 +48,19 @@ export default function ProjectDetailsPage() {
       if (ownerId(projectData.owner) === user?._id) {
         const list = await proposalsApi.getProjectProposals(id);
         setProposals(list);
+      } else {
+        // چک می‌کنیم آیا کاربر قبلاً برای همین پروژه پیشنهاد داده یا نه،
+        // تا از ارسال پیشنهاد تکراری (که بک‌اند رد می‌کند) جلوگیری کنیم.
+        try {
+          const mine = await proposalsApi.getMyProposals();
+          const existing = mine.find((p) => {
+            const projectRefId = typeof p.project === "string" ? p.project : p.project?._id;
+            return projectRefId === id;
+          });
+          setMyProposal(existing ?? null);
+        } catch {
+          setMyProposal(null);
+        }
       }
     } catch (err) {
       setError(extractErrorMessage(err, "دریافت اطلاعات پروژه با خطا مواجه شد."));
@@ -57,6 +71,7 @@ export default function ProjectDetailsPage() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleDelete = async () => {
@@ -175,6 +190,22 @@ export default function ProjectDetailsPage() {
               ))}
             </div>
           )}
+        </div>
+      ) : myProposal ? (
+        <div className="card flex flex-col gap-3">
+          <div className="flex items-center gap-2 text-sm font-medium text-brand-700">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            شما قبلاً برای این پروژه پیشنهاد ارسال کرده‌اید
+          </div>
+          <p className="text-sm text-ink/80">{myProposal.message}</p>
+          {myProposal.budget !== undefined && (
+            <p className="text-sm text-muted">بودجه‌ی پیشنهادی شما: {formatCurrency(myProposal.budget)}</p>
+          )}
+          <Link to="/proposals" className="btn-outline self-start text-xs">
+            مدیریت پیشنهادهایم
+          </Link>
         </div>
       ) : project.status !== "OPEN" ? (
         <div className="card flex items-start gap-3 border-accent-200 bg-accent-50/40">
