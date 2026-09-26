@@ -4,32 +4,34 @@ const valid = require('../../validators/project')
 const {isValidObjectId} = require('mongoose')
 const validator = require('../../validators/project');
 
-exports.create = async(req ,res) => {
-    const {title,
-    description,
-    budget,
-    deliveryDays,
-    category,
-    images
-} = req.body
+exports.create = async (req, res) => {
+    const {
+        title,
+        description,
+        budget,
+        deliveryDays,
+        category,
+    } = req.body
 
     const validate = valid(req.body)
-    if(validate!== true){
+    if (validate !== true) {
         return res.status(422).json({
             success: false,
             message: "Request Is Not Valid !",
-            data: validate})
+            data: validate
+        })
     }
-    const image = req.files.map(file => file.filename)
+
+    const image = req.files ? req.files.map(file => file.filename) : []
 
     const project = await projectModel.create({
-    title,
-    description,
-    budget,
-    deliveryDays,
-    category,
-    owner: req.user._id,
-    images: image
+        title,
+        description,
+        budget,
+        deliveryDays,
+        category,
+        owner: req.user._id,
+        images: image
     })
 
     return res.status(201).json({
@@ -37,8 +39,6 @@ exports.create = async(req ,res) => {
         message: "Project Created Successfully!",
         data: project
     })
-
-
 }
 
 exports.getAll = async (req ,res) =>{
