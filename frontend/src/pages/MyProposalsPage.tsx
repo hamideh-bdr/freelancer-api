@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import type { Proposal } from "@/types";
 import * as proposalsApi from "@/services/api/proposals";
+import * as projectsApi from "@/services/api/projects";
 import { extractErrorMessage } from "@/services/api/axiosInstance";
+import { extractProjectId, extractProjectTitle } from "@/utils/proposalHelpers";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ErrorAlert from "@/components/ErrorAlert";
 import EmptyState from "@/components/EmptyState";
@@ -21,7 +23,24 @@ export default function MyProposalsPage() {
     setError(null);
     try {
       const data = await proposalsApi.getMyProposals();
-      setProposals(data);
+
+      // اگر پاسخ بک‌اند فقط آی‌دی پروژه را می‌دهد (نه عنوانش)، جداگانه
+      // اطلاعات هر پروژه را می‌گیریم تا عنوانش قابل‌نمایش باشد.
+      const enriched = await Promise.all(
+        data.map(async (p) => {
+          if (extractProjectTitle(p)) return p;
+          const projectId = extractProjectId(p);
+          if (!projectId) return p;
+          try {
+            const project = await projectsApi.getProjectById(projectId);
+            return { ...p, project };
+          } catch {
+            return p;
+          }
+        })
+      );
+
+      setProposals(enriched);
     } catch (err) {
       setError(extractErrorMessage(err, "دریافت پیشنهادهای شما با خطا مواجه شد."));
     } finally {
@@ -119,6 +138,8 @@ export default function MyProposalsPage() {
               <ProposalCard
                 key={p._id}
                 proposal={p}
+                projectId={extractProjectId(p)}
+                projectTitle={extractProjectTitle(p)}
                 onEdit={() => startEdit(p)}
                 onDelete={() => handleDelete(p._id)}
                 busy={busyId === p._id}

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { Proposal, User } from "@/types";
 import StatusBadge from "./StatusBadge";
 import { formatCurrency, formatDate } from "@/utils/formatters";
@@ -9,6 +10,10 @@ interface Props {
   onEdit?: () => void;
   onDelete?: () => void;
   busy?: boolean;
+  /** عنوان پروژه‌ای که این پیشنهاد برای آن ارسال شده (اگر پیدا شود). */
+  projectTitle?: string;
+  /** آی‌دی پروژه، برای ساخت لینک به صفحه‌ی جزئیات پروژه. */
+  projectId?: string;
 }
 
 function freelancerName(freelancer?: User | string) {
@@ -17,9 +22,31 @@ function freelancerName(freelancer?: User | string) {
   return freelancer.name || freelancer.username;
 }
 
-export default function ProposalCard({ proposal, isOwnerView, onAccept, onEdit, onDelete, busy }: Props) {
+export default function ProposalCard({
+  proposal,
+  isOwnerView,
+  onAccept,
+  onEdit,
+  onDelete,
+  busy,
+  projectTitle,
+  projectId,
+}: Props) {
   return (
     <div className="card flex flex-col gap-3">
+      {!isOwnerView && (projectTitle || projectId) && (
+        <div className="-mb-1 flex items-center gap-1.5 text-xs text-muted">
+          <span>پیشنهاد برای پروژه:</span>
+          {projectId ? (
+            <Link to={`/projects/${projectId}`} className="font-medium text-brand-700 hover:text-brand-800">
+              {projectTitle ?? "مشاهده پروژه"}
+            </Link>
+          ) : (
+            <span className="font-medium text-ink">{projectTitle}</span>
+          )}
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-ink">{freelancerName(proposal.freelancer)}</p>

@@ -12,6 +12,7 @@ import EmptyState from "@/components/EmptyState";
 import StatusBadge from "@/components/StatusBadge";
 import ProposalCard from "@/components/ProposalCard";
 import { formatCurrency, formatDate } from "@/utils/formatters";
+import { extractProjectId } from "@/utils/proposalHelpers";
 
 function ownerId(owner?: Project["owner"]): string | undefined {
   if (!owner) return undefined;
@@ -54,7 +55,7 @@ export default function ProjectDetailsPage() {
         try {
           const mine = await proposalsApi.getMyProposals();
           const existing = mine.find((p) => {
-            const projectRefId = typeof p.project === "string" ? p.project : p.project?._id;
+            const projectRefId = extractProjectId(p);
             return projectRefId === id;
           });
           setMyProposal(existing ?? null);

@@ -16,6 +16,25 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * ورود/ثبت‌نام موفق است، ولی گرفتن اطلاعات کاربر (/auth/me) بلافاصله بعدش
+ * ممکن است یک‌بار به‌خاطر کندی لحظه‌ای سرور fail شود؛ یک بار دیگر امتحان می‌کنیم
+ * قبل از اینکه واقعاً شکست را به کاربر اعلام کنیم — تا «ورود موفق» به‌اشتباه
+ * «ورود ناموفق» نشان داده نشود.
+ */
+async function fetchMeWithRetry(): Promise<User> {
+  try {
+    return await authApi.getMe();
+  } catch {
+    await wait(800);
+    return await authApi.getMe();
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
@@ -28,9 +47,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // در بار اول بارگذاری اپ، تلاش می‌کنیم با refresh token (کوکی httpOnly)
-    // یک access token جدید بگیریم و بعد اطلاعات کاربر را جداگانه دریافت کنیم
-    // (چون بک‌اند در پاسخ توکن، خود کاربر را برنمی‌گرداند).
     (async () => {
       try {
         const token = await authApi.refreshToken();
@@ -48,16 +64,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (payload: LoginPayload) => {
     const token = await authApi.login(payload);
+    // از اینجا به بعد، اعتبار کاربر تأیید شده؛ خطای احتمالی دیگر «رمز/نام کاربری اشتباه» نیست.
     setAccessToken(token);
-    const me = await authApi.getMe();
-    setUser(me);
+    try {
+      const me = await fetchMeWithRetry();
+      setUser(me);
+    } catch {
+      setAccessToken(null);
+      throw new Error("ورود با موفقیت انجام شد، اما دریافت اطلاعات حساب شما با خطا مواجه شد. لطفاً دوباره تلاش کنید.");
+    }
   }, []);
 
   const register = useCallback(async (payload: RegisterPayload) => {
     const token = await authApi.register(payload);
     setAccessToken(token);
-    const me = await authApi.getMe();
-    setUser(me);
+    try {
+      const me = await fetchMeWithRetry();
+      setUser(me);
+    } catch {
+      setAccessToken(null);
+      throw new Error("ثبت‌نام با موفقیت انجام شد، اما دریافت اطلاعات حساب شما با خطا مواجه شد. لطفاً وارد شوید.");
+    }
   }, []);
 
   const logout = useCallback(async () => {
