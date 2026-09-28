@@ -16,7 +16,8 @@ const bookMarkMiddleware = require('./routes/v1/bookmark')
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://freelancer-frontend-35qf.onrender.com"
+  "https://freelancer-frontend-35qf.onrender.com",
+  "https://freelancer-vqhh.onrender.com"
 ];
 
 app.use(cors({
