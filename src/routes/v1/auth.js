@@ -124,7 +124,18 @@ router.route('/me')
  *         description: Avatar uploaded successfully
  */
 router.route("/avatar")
-    .patch(generalLimit,authMiddleware,upload.single("avatar"),authController.uploadAvatar)
+    .patch(generalLimit, authMiddleware, (req, res, next) => {
+        upload.single("avatar")(req, res, (err) => {
+            if (err) {
+                return res.status(422).json({
+                    success: false,
+                    message: err.message,
+                    data: null
+                })
+            }
+            next()
+        })
+    }, authController.uploadAvatar)
 
 /**
  * @swagger
