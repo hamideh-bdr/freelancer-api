@@ -107,17 +107,19 @@ exports.getMe = async (req,res) => {
     
 }
 
-exports.uploadAvatar = async (req,res) => {
+exports.uploadAvatar = async (req, res) => {
+    if (!req.file) {
+        return res.status(422).json({
+            success: false,
+            message: "فایل معتبر نیست یا حجمش بیشتر از ۲ مگابایت است.",
+            data: null
+        })
+    }
     const updateUser = await userModel.findByIdAndUpdate(
         req.user._id,
-        { avatar: req.file.filename}, {new: true}
-    )    
-    return res.status(200).json({
-        success: true,
-        message: "Avatar uploaded successfully",
-        data: updateUser
-    })
-    
+        { avatar: req.file.filename }, { new: true }
+    )
+    return res.status(200).json({ success: true, message: "Avatar uploaded successfully", data: updateUser })
 }
 
 exports.refreshToken = async (req,res) => {
@@ -278,5 +280,53 @@ exports.logout = async (req, res) => {
         success: true,
         message: "Logout successfully !",
         data: null
+    })
+}
+
+exports.updateProfile = async (req, res) => {
+    const { name, username, email, phone } = req.body
+
+    const updates = {}
+    if (name !== undefined) updates.name = name
+    if (username !== undefined) updates.username = username
+    if (email !== undefined) updates.email = email
+    if (phone !== undefined) updates.phone = phone
+
+    if (Object.keys(updates).length === 0) {
+        return res.status(422).json({ success: false, message: "No valid fields to update", data: null })
+    }
+    if (updates.name !== undefined && String(updates.name).trim().length < 3) {
+        return res.status(422).json({ success: false, message: "Name must be at least 3 characters", data: null })
+    }
+    if (updates.username !== undefined && String(updates.username).trim().length < 4) {
+        return res.status(422).json({ success: false, message: "Username must be at least 4 characters", data: null })
+    }
+    if (updates.phone !== undefined && String(updates.phone).length > 11) {
+        return res.status(422).json({ success: false, message: "Phone must be at most 11 characters", data: null })
+    }
+
+    const orConditions = []
+    if (updates.username) orConditions.push({ username: updates.username })
+    if (updates.email) orConditions.push({ email: updates.email })
+    if (updates.phone) orConditions.push({ phone: updates.phone })
+
+    if (orConditions.length > 0) {
+        const duplicate = await userModel.findOne({
+            $or: orConditions,
+            _id: { $ne: req.user._id }
+        })
+        if (duplicate) {
+            return res.status(409).json({ success: false, message: "user exist already", data: null })
+        }
+    }
+
+    const updatedUser = await userModel
+        .findByIdAndUpdate(req.user._id, updates, { new: true })
+        .select("-password")
+
+    return res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        data: updatedUser
     })
 }

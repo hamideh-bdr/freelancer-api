@@ -98,6 +98,7 @@ router.route('/login')
  */
 router.route('/me')
     .get(generalLimit,authMiddleware,authController.getMe)
+    .patch(generalLimit, authMiddleware, authController.updateProfile)
 
 /**
  * @swagger
